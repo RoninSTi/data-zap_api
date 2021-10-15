@@ -5,7 +5,8 @@
   "main": "src/index.js",
   "type": "module",
   "scripts": {
-    "start": "nodemon --exec babel-node src/index.js",
+    "start:babel": "nodemon -L --exec babel-node src/index.js",
+    "start": "nodemon -L src/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -18,7 +19,6 @@
     "cors": "^2.8.5",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
-    "nodemon": "^2.0.13",
     "pg": "^8.7.1",
     "sequelize": "^6.7.0"
   }

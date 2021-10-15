@@ -8,6 +8,8 @@ import routes from "./routes/index.js";
 
 import { sequelize } from "./models/index.js";
 
+import AppError from "./errors/app-error.js";
+
 const app = express();
 
 app.use(cors());
@@ -20,8 +22,22 @@ app.get("/ping", (_, res) => {
   res.send("pong");
 });
 
-sequelize.sync().then(() => {
-  app.listen(8000, "0.0.0.0", () =>
-    console.log("Example app listening on port 8000!")
-  );
+app.all("*", (req, res, next) => {
+  next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
 });
+
+app.use((err, _, res, _) => {
+  err.statusCode = err.statusCode || 500;
+  err.status = err.status || "error";
+
+  res.status(err.statusCode).json({
+    status: err.status,
+    message: err.message,
+  });
+});
+
+// sequelize.sync().then(() => {
+app.listen(8000, "0.0.0.0", () =>
+  console.log("DataZap API listening on port 8000!")
+);
+// });
