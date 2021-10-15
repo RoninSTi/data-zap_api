@@ -1,5 +1,5 @@
-import user from "./user.js";
+const user = require("./user.js");
 
-export default {
+module.exports = {
   user,
 };

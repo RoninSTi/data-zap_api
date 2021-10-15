@@ -1,14 +1,16 @@
-import express from "express";
+const express = require("express");
 
-import "dotenv/config";
+require("dotenv/config");
 
-import cors from "cors";
+const cors = require("cors");
 
-import routes from "./routes/index.js";
+const routes = require("./routes/index.js");
 
-import { sequelize } from "./models/index.js";
+const { sequelize } = require("./models/index.js");
 
-import AppError from "./errors/app-error.js";
+const { validationErrorMiddleware } = require("./schemas/index.js");
+
+const AppError = require("./errors/app-error.js");
 
 const app = express();
 
@@ -26,7 +28,9 @@ app.all("*", (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
 });
 
-app.use((err, _, res, _) => {
+app.use(validationErrorMiddleware);
+
+app.use((err, req, res, next) => {
   err.statusCode = err.statusCode || 500;
   err.status = err.status || "error";
 
@@ -36,8 +40,8 @@ app.use((err, _, res, _) => {
   });
 });
 
-// sequelize.sync().then(() => {
-app.listen(8000, "0.0.0.0", () =>
-  console.log("DataZap API listening on port 8000!")
-);
-// });
+sequelize.sync({ alter: true }).then(() => {
+  app.listen(8000, "0.0.0.0", () =>
+    console.log("DataZap API listening on port 8000!")
+  );
+});

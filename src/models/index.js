@@ -1,7 +1,7 @@
-import Sequelize from "sequelize";
+const Sequelize = require("sequelize");
 
-import logModel from "./log.js";
-import userModel from "./user.js";
+const logModel = require("./log.js");
+const userModel = require("./user.js");
 
 const sequelize = new Sequelize(
   process.env.POSTGRES_DB,
@@ -24,6 +24,4 @@ Object.keys(models).forEach((key) => {
   }
 });
 
-export { sequelize };
-
-export default models;
+module.exports = { sequelize, models };

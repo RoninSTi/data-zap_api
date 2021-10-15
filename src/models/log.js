@@ -16,4 +16,4 @@ const log = (sequelize, DataTypes) => {
   return Log;
 };
 
-export default log;
+module.exports = log;
