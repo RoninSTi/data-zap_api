@@ -1,6 +1,6 @@
-const express = require("express");
-
 require("dotenv/config");
+
+const express = require("express");
 
 const cors = require("cors");
 
@@ -18,7 +18,7 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use("/user", routes.user);
+app.use("/v1", routes.v1);
 
 app.get("/ping", (_, res) => {
   res.send("pong");

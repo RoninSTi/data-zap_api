@@ -1,5 +1,5 @@
-const user = require("./user.js");
+const v1 = require("./v1.js");
 
 module.exports = {
-  user,
+  v1,
 };
