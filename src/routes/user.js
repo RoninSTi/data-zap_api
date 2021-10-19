@@ -22,7 +22,7 @@ router.get("/:userId", authenticateToken, async (req, res, next) => {
   const { userId } = req.params;
 
   try {
-    const response = await models.User.getUser({ id: parseInt(userId) });
+    const response = await models.User.getUser({ id: userId });
 
     res.send(response);
   } catch (err) {
