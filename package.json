@@ -22,6 +22,7 @@
     "express": "^4.17.1",
     "express-json-validator-middleware": "^2.2.1",
     "jsonwebtoken": "^8.5.1",
+    "nanoid": "^3.1.30",
     "pg": "^8.7.1",
     "sequelize": "^6.7.0"
   }

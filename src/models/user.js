@@ -39,6 +39,11 @@ const user = (sequelize, DataTypes) => {
     },
   });
 
+  User.associate = (models) => {
+    User.hasMany(models.Log, { onDelete: "CASCADE" });
+    User.hasMany(models.Apikey, { onDelete: "CASCADE" });
+  };
+
   User.authenticate = async ({ email, password }) => {
     const user = await User.findOne({
       where: {
@@ -47,7 +52,7 @@ const user = (sequelize, DataTypes) => {
     });
 
     if (!user) {
-      throw AppError("User not found", 404);
+      throw new AppError("User not found", 404);
     }
 
     const passwordIsValid = bcrypt.compareSync(password, user.password);
@@ -166,10 +171,6 @@ const user = (sequelize, DataTypes) => {
     };
 
     return response;
-  };
-
-  User.associate = (models) => {
-    User.hasMany(models.Log, { onDelete: "CASCADE" });
   };
 
   User.prototype.response = function () {

@@ -1,3 +1,4 @@
+const apikey = require("./apikey.js");
 const user = require("./user.js");
 
 const {
@@ -9,7 +10,7 @@ const { validate } = new Validator();
 
 const validationErrorMiddleware = (err, _, res, next) => {
   if (res.headersSent) {
-    return next(error);
+    return next(err);
   }
 
   const isValidationError = err instanceof ValidationError;
@@ -19,10 +20,10 @@ const validationErrorMiddleware = (err, _, res, next) => {
   }
 
   res.status(400).json({
-    errors: error.validationErrors,
+    errors: err.validationErrors,
   });
 
   next();
 };
 
-module.exports = { user, validate, validationErrorMiddleware };
+module.exports = { apikey, user, validate, validationErrorMiddleware };
