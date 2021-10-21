@@ -1,4 +1,5 @@
 const apikey = require("./apikey.js");
+const log = require("./log.js");
 const user = require("./user.js");
 
 const {
@@ -26,4 +27,4 @@ const validationErrorMiddleware = (err, _, res, next) => {
   next();
 };
 
-module.exports = { apikey, user, validate, validationErrorMiddleware };
+module.exports = { apikey, log, user, validate, validationErrorMiddleware };

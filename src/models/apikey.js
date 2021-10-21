@@ -29,10 +29,10 @@ const apikey = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    active: {
-      type: DataTypes.ENUM,
-      defaultValue: "active",
-      values: ["active", "inactive"],
+    isActive: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: true,
+      allowNull: false,
     },
   });
 
@@ -49,7 +49,7 @@ const apikey = (sequelize, DataTypes) => {
         "id",
         "prefix",
         "scopes",
-        "active",
+        "isActive",
         "createdAt",
         "updatedAt",
       ],
@@ -113,7 +113,7 @@ const apikey = (sequelize, DataTypes) => {
         "id",
         "prefix",
         "scopes",
-        "active",
+        "isActive",
         "createdAt",
         "updatedAt",
       ],

@@ -40,7 +40,7 @@ app.use((err, req, res, next) => {
   });
 });
 
-sequelize.sync().then(() => {
+sequelize.sync({ alter: true }).then(() => {
   app.listen(8000, "0.0.0.0", () =>
     console.log("DataZap API listening on port 8000!")
   );

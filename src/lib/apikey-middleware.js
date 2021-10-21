@@ -38,7 +38,7 @@ const validateApikey =
       if (!hasScopes)
         throw new AppError("Apikey not provisioned for operation", 401);
 
-      if (apikey.active === "active") {
+      if (apikey.isActive) {
         next();
       } else {
         throw new AppError("Apikey inactive", 401);
