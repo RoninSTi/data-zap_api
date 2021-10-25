@@ -10,6 +10,10 @@ const { sequelize } = require("./models/index.js");
 
 const { validationErrorMiddleware } = require("./schemas/index.js");
 
+const sgMail = require("@sendgrid/mail");
+
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+
 const AppError = require("./errors/app-error.js");
 
 const app = express();

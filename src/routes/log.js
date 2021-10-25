@@ -1,74 +1,67 @@
 const { Router } = require("express");
+const asyncHandler = require("express-async-handler");
 
-const { authenticateToken } = require("../lib/auth-middleware.js");
+const { authenticateToken } = require("../middleware/auth.js");
 const { log, validate } = require("../schemas/index.js");
 
-const { models } = require("../models/index.js");
+const { create, getLog, list, update } = require("../controllers/log");
 
 const router = Router();
 
-router.get("/", authenticateToken, async (req, res, next) => {
-  const { id: userId } = req.user;
-  const { page = 1, pageSize = 100 } = req.query;
+router.get(
+  "/",
+  authenticateToken,
+  asyncHandler(async (req, res) => {
+    const { id: userId } = req.user;
+    const { page = 1, pageSize = 100 } = req.query;
 
-  const offset = page * pageSize - pageSize;
-  const limit = pageSize;
+    const offset = page * pageSize - pageSize;
+    const limit = pageSize;
 
-  try {
-    const response = await models.Log.getList({ offset, limit, userId });
-
-    res.send(response);
-  } catch (err) {
-    next(err);
-  }
-});
-
-router.get("/:logId", authenticateToken, async (req, res, next) => {
-  const { logId } = req.params;
-
-  try {
-    const response = await models.Log.getLog({ logId });
+    const response = await list({ offset, limit, userId });
 
     res.send(response);
-  } catch (err) {
-    next(err);
-  }
-});
+  })
+);
+
+router.get(
+  "/:logId",
+  authenticateToken,
+  asyncHandler(async (req, res) => {
+    const { logId } = req.params;
+
+    const response = await getLog({ logId });
+
+    res.send(response);
+  })
+);
 
 router.post(
   "/",
   authenticateToken,
   validate({ body: log.post }),
-  async (req, res, next) => {
+  asyncHandler(async (req, res) => {
     const data = req.body;
     const { id: userId } = req.user;
 
-    try {
-      const response = await models.Log.createNew({ data, userId });
+    const response = await create({ data, userId });
 
-      res.send(response);
-    } catch (err) {
-      next(err);
-    }
-  }
+    res.send(response);
+  })
 );
 
 router.put(
   "/:logId",
   authenticateToken,
   validate({ body: log.put }),
-  async (req, res, next) => {
+  asyncHandler(async (req, res) => {
     const data = req.body;
     const { logId } = req.params;
 
-    try {
-      const response = await models.Log.updateLog({ logId, data });
+    const response = await update({ logId, data });
 
-      res.send(response);
-    } catch (err) {
-      next(err);
-    }
-  }
+    res.send(response);
+  })
 );
 
 module.exports = router;

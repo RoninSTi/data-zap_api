@@ -1,61 +1,55 @@
 const { Router } = require("express");
-const { authenticateToken } = require("../lib/auth-middleware.js");
-const { models } = require("../models/index.js");
+const asyncHandler = require("express-async-handler");
+
+const { authenticateToken } = require("../middleware/auth.js");
 const { apikey, validate } = require("../schemas/index.js");
+const { generate, list, update } = require("../controllers/apikey.js");
 
 const router = Router();
 
-router.get("/", authenticateToken, async (req, res, next) => {
-  const { id } = req.user;
+router.get(
+  "/",
+  authenticateToken,
+  asyncHandler(async (req, res) => {
+    const { id } = req.user;
 
-  try {
-    const response = await models.Apikey.list({ userId: id });
+    const response = await list({ userId: id });
 
     res.send(response);
-  } catch (err) {
-    next(err);
-  }
-});
+  })
+);
 
 router.post(
   "/",
   authenticateToken,
   validate({ body: apikey.post }),
-  async (req, res, next) => {
+  asyncHandler(async (req, res) => {
     const { id } = req.user;
     const { scopes } = req.body;
 
-    try {
-      const response = await models.Apikey.generate({ userId: id, scopes });
+    const response = await generate({ userId: id, scopes });
 
-      res.send(response);
-    } catch (err) {
-      next(err);
-    }
-  }
+    res.send(response);
+  })
 );
 
 router.put(
   "/:apikeyId",
   authenticateToken,
   validate({ body: apikey.put }),
-  async (req, res, next) => {
+  asyncHandler(async (req, res) => {
     const { apikeyId } = req.params;
     const data = req.body;
     const { id: userId } = req.user;
 
-    try {
-      const response = await models.Apikey.updateKey({
-        apikeyId,
-        data,
-        userId,
-      });
+    const response = await update({
+      apikeyId,
+      data,
+      userId,
+    });
 
-      res.send(response);
-    } catch (err) {
-      next(err);
-    }
-  }
+    res.send(response);
+  })
 );
 
 module.exports = router;

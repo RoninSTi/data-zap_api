@@ -1,9 +1,9 @@
 const { Router } = require("express");
+const asyncHandler = require("express-async-handler");
 
-const { validateApikey } = require("../lib/apikey-middleware.js");
+const { validateApikey } = require("../middleware/apikey.js");
 const { log, validate } = require("../schemas/index.js");
-
-const { models } = require("../models/index.js");
+const { create } = require("../controllers/log.js");
 
 const router = Router();
 
@@ -11,17 +11,13 @@ router.post(
   "/",
   validateApikey({ scope: "log.create" }),
   validate({ body: log.post }),
-  async (req, res, next) => {
+  asyncHandler(async (req, res) => {
     const { userId, ...data } = req.body;
 
-    try {
-      const response = await models.Log.createNew({ data, userId });
+    const response = await create({ data, userId });
 
-      res.send(response);
-    } catch (err) {
-      next(err);
-    }
-  }
+    res.send(response);
+  })
 );
 
 module.exports = router;

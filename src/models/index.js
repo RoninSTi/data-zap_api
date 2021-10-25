@@ -5,6 +5,7 @@ const logModel = require("./log.js");
 const logtagModel = require("./logtag.js");
 const tagModel = require("./tag.js");
 const userModel = require("./user.js");
+const userotpModel = require("./userotp.js");
 
 const sequelize = new Sequelize(
   process.env.POSTGRES_DB,
@@ -22,6 +23,7 @@ const models = {
   Tag: tagModel(sequelize, Sequelize.DataTypes),
   Log: logModel(sequelize, Sequelize.DataTypes),
   LogTag: logtagModel(sequelize, Sequelize.DataTypes),
+  UserOtp: userotpModel(sequelize, Sequelize.DataTypes),
 };
 
 Object.keys(models).forEach((key) => {
