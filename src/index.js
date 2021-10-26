@@ -4,6 +4,8 @@ const express = require("express");
 
 const cors = require("cors");
 
+const cookieParser = require("cookie-parser");
+
 const routes = require("./routes/index.js");
 
 const { sequelize } = require("./models/index.js");
@@ -19,6 +21,7 @@ const AppError = require("./errors/app-error.js");
 const app = express();
 
 app.use(cors());
+app.use(cookieParser(process.env.APP_SECRET));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 

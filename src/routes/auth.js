@@ -10,6 +10,8 @@ const {
   reset,
 } = require("../controllers/auth.js");
 
+const { authenticateToken } = require("../middleware/auth.js");
+
 const router = Router();
 
 router.post(
@@ -30,11 +32,27 @@ router.post(
   asyncHandler(async (req, res) => {
     const { email, password } = req.body;
 
-    const response = await authenticate({ email, password });
+    const { accessToken, ...response } = await authenticate({
+      email,
+      password,
+    });
 
-    res.send(response);
+    return res
+      .cookie("access_token", accessToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+      })
+      .status(200)
+      .json(response);
   })
 );
+
+router.post("/logout", authenticateToken, (_, res) => {
+  return res
+    .clearCookie("access_token")
+    .status(200)
+    .json({ message: "Successfully logged out" });
+});
 
 router.post(
   "/register",

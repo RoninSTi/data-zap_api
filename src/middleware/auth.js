@@ -1,11 +1,13 @@
 const jwt = require("jsonwebtoken");
 
+const AppError = require("../errors/app-error");
+
 const authenticateToken = (req, res, next) => {
-  const authHeader = req.headers["authorization"];
+  const token = req.cookies.access_token;
 
-  const token = authHeader && authHeader.split(" ")[1];
-
-  if (token == null) return res.sendStatus(401);
+  if (!token) {
+    throw new AppError("No token provided", 401);
+  }
 
   jwt.verify(token, process.env.APP_SECRET, (err, user) => {
     if (err) {
