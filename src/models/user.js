@@ -34,6 +34,7 @@ const user = (sequelize, DataTypes) => {
   User.associate = (models) => {
     User.hasMany(models.Log, { onDelete: "CASCADE" });
     User.hasMany(models.Apikey, { onDelete: "CASCADE" });
+    User.hasMany(models.Page, { onDelete: "CASCADE" });
     User.hasOne(models.UserOtp, { onDelete: "CASCADE" });
   };
 

@@ -3,6 +3,8 @@ const Sequelize = require("sequelize");
 const apikeyModel = require("./apikey.js");
 const logModel = require("./log.js");
 const logtagModel = require("./logtag.js");
+const pageModel = require("./page.js");
+const pagelogModel = require("./pagelog.js");
 const tagModel = require("./tag.js");
 const userModel = require("./user.js");
 const userotpModel = require("./userotp.js");
@@ -23,6 +25,8 @@ const models = {
   Tag: tagModel(sequelize, Sequelize.DataTypes),
   Log: logModel(sequelize, Sequelize.DataTypes),
   LogTag: logtagModel(sequelize, Sequelize.DataTypes),
+  Page: pageModel(sequelize, Sequelize.DataTypes),
+  PageLog: pagelogModel(sequelize, Sequelize.DataTypes),
   UserOtp: userotpModel(sequelize, Sequelize.DataTypes),
 };
 

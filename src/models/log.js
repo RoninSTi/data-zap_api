@@ -1,5 +1,3 @@
-const AppError = require("../errors/app-error");
-
 const log = (sequelize, DataTypes) => {
   const Log = sequelize.define("log", {
     id: {
@@ -37,6 +35,7 @@ const log = (sequelize, DataTypes) => {
   Log.associate = (models) => {
     Log.belongsTo(models.User);
     Log.belongsToMany(models.Tag, { through: models.LogTag });
+    Log.belongsToMany(models.Page, { through: models.PageLog });
   };
 
   return Log;
