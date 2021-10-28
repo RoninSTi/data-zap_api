@@ -36,6 +36,9 @@ const authenticate = async ({ email, password }) => {
 
   const response = {
     accessToken,
+    accessExpiration: {
+      expires: new Date(Date.now() + 86400),
+    },
     message: "Login successful",
     user: user.response(),
   };

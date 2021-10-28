@@ -12,15 +12,16 @@ const { sequelize } = require("./models/index.js");
 
 const { validationErrorMiddleware } = require("./schemas/index.js");
 
-const sgMail = require("@sendgrid/mail");
-
-sgMail.setApiKey(process.env.SENDGRID_API_KEY);
-
 const AppError = require("./errors/app-error.js");
 
 const app = express();
 
-app.use(cors());
+app.use(
+  cors({
+    credentials: true,
+    origin: process.env.CLIENT_URL,
+  })
+);
 app.use(cookieParser(process.env.APP_SECRET));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

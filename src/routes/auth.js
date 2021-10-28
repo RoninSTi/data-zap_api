@@ -32,7 +32,7 @@ router.post(
   asyncHandler(async (req, res) => {
     const { email, password } = req.body;
 
-    const { accessToken, ...response } = await authenticate({
+    const { accessToken, accessExpiration, ...response } = await authenticate({
       email,
       password,
     });
@@ -40,6 +40,10 @@ router.post(
     return res
       .cookie("access_token", accessToken, {
         httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+      })
+      .cookie("access_expiration", accessExpiration, {
+        httpOnly: false,
         secure: process.env.NODE_ENV === "production",
       })
       .status(200)
@@ -50,6 +54,7 @@ router.post(
 router.post("/logout", authenticateToken, (_, res) => {
   return res
     .clearCookie("access_token")
+    .clearCookie("access_expiration")
     .status(200)
     .json({ message: "Successfully logged out" });
 });
