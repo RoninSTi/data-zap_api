@@ -26,6 +26,10 @@ const log = (sequelize, DataTypes) => {
         notEmpty: true,
       },
     },
+    viewedAt: {
+      type: DataTypes.DATE,
+      allowNull: true,
+    },
     youtubeUrl: {
       type: DataTypes.STRING,
       allowNull: true,

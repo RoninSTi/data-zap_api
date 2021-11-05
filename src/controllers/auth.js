@@ -30,14 +30,14 @@ const authenticate = async ({ email, password }) => {
     },
     process.env.APP_SECRET,
     {
-      expiresIn: 86400,
+      expiresIn: 86400 * 1000,
     }
   );
 
   const response = {
     accessToken,
     accessExpiration: {
-      expires: new Date(Date.now() + 86400),
+      expires: new Date(Date.now() + 86400 * 1000),
     },
     message: "Login successful",
     user: user.response(),

@@ -2,6 +2,7 @@ const apikey = require("./apikey.js");
 const auth = require("./auth.js");
 const log = require("./log.js");
 const page = require("./page.js");
+const upload = require("./upload.js");
 const user = require("./user.js");
 
 const {
@@ -34,6 +35,7 @@ module.exports = {
   auth,
   log,
   page,
+  upload,
   user,
   validate,
   validationErrorMiddleware,

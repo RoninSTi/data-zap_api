@@ -1,5 +1,6 @@
-const { models } = require("../models/index.js");
+const { models, sequelize } = require("../models/index.js");
 const AppError = require("../errors/app-error.js");
+const { Op } = require("Sequelize");
 
 const associateTags = async ({ logId, tags }) => {
   const log = await models.Log.findByPk(logId);
@@ -15,64 +16,6 @@ const associateTags = async ({ logId, tags }) => {
   const tagsToAdd = tagObjects.map((tagObject) => tagObject[0]);
 
   return log.setTags(tagsToAdd);
-};
-
-const create = async ({ data, userId }) => {
-  const { tags, ...rest } = data;
-
-  const user = await models.User.findByPk(userId);
-
-  if (!user) throw new AppError("No user found", 404);
-
-  const log = await models.Log.create(rest);
-
-  await log.setUser(user);
-
-  if (tags && tags.length > 0) {
-    await associateTags({ logId: log.id, tags });
-  }
-
-  const logResponse = await logResponse({ logId: log.id });
-
-  const response = {
-    message: "Log created",
-    log: logResponse,
-  };
-
-  return response;
-};
-
-const getLog = async ({ logId }) => {
-  const response = await logResponse({ logId });
-
-  return response;
-};
-
-const list = async ({ userId, limit, offset }) => {
-  const logs = await models.Log.findAll({
-    where: {
-      userId,
-    },
-    include: [
-      {
-        model: models.Tag,
-        attributes: ["id", "name"],
-        through: {
-          attributes: [],
-        },
-      },
-    ],
-    order: [["createdAt", "DESC"]],
-    limit,
-    offset,
-  });
-
-  const response = {
-    message: "Logs fetched",
-    logs: logs,
-  };
-
-  return response;
 };
 
 const logResponse = async ({ logId }) => {
@@ -94,6 +37,100 @@ const logResponse = async ({ logId }) => {
   return log.toJSON();
 };
 
+const create = async ({ data, userId }) => {
+  const { tags, ...rest } = data;
+
+  const user = await models.User.findByPk(userId);
+
+  if (!user) throw new AppError("No user found", 404);
+
+  const log = await models.Log.create(rest);
+
+  await log.setUser(user);
+
+  if (tags && tags.length > 0) {
+    await associateTags({ logId: log.id, tags });
+  }
+
+  const logJSON = await logResponse({ logId: log.id });
+
+  const response = {
+    message: "Log created",
+    log: logJSON,
+  };
+
+  return response;
+};
+
+const getLog = async ({ logId }) => {
+  const response = await logResponse({ logId });
+
+  return response;
+};
+
+const list = async ({ userId, limit, offset }) => {
+  const count = await models.Log.count({
+    where: {
+      userId,
+    },
+  });
+
+  const logs = await models.Log.findAll({
+    where: {
+      userId,
+    },
+    include: [
+      {
+        model: models.Tag,
+        attributes: ["id", "name"],
+        through: {
+          attributes: [],
+        },
+      },
+    ],
+    order: [["createdAt", "DESC"]],
+    limit,
+    offset,
+  });
+
+  const response = {
+    message: "Logs fetched",
+    logs,
+    count,
+  };
+
+  return response;
+};
+
+const recentlyViewed = async ({ userId, limit, offset }) => {
+  const logs = await models.Log.findAll({
+    where: {
+      userId,
+      viewedAt: {
+        [Op.ne]: null,
+      },
+    },
+    include: [
+      {
+        model: models.Tag,
+        attributes: ["id", "name"],
+        through: {
+          attributes: [],
+        },
+      },
+    ],
+    order: [["viewedAt", "DESC"]],
+    limit: 10,
+  });
+
+  const response = {
+    message: "Recently viewed logs fetched",
+    logs,
+  };
+
+  return response;
+};
+
 const update = async ({ logId, data }) => {
   const log = await models.Log.findByPk(logId);
 
@@ -111,11 +148,26 @@ const update = async ({ logId, data }) => {
 
   await log.update(rest);
 
-  const logResponse = await logResponse({ logId });
+  const logJSON = await logResponse({ logId });
 
   const response = {
     message: "Log updated",
-    log: logResponse,
+    log: logJSON,
+  };
+
+  return response;
+};
+
+const view = async ({ logId }) => {
+  const log = await models.Log.findByPk(logId);
+
+  await log.update({ viewedAt: sequelize.fn("NOW") });
+
+  const logJSON = await logResponse({ logId });
+
+  const response = {
+    message: "Log viewed",
+    log: logJSON,
   };
 
   return response;
@@ -125,5 +177,7 @@ module.exports = {
   create,
   getLog,
   list,
+  recentlyViewed,
   update,
+  view,
 };
